@@ -1,8 +1,11 @@
 #!/usr/bin/env python3
 import argparse
+import configparser
 from phue import Bridge
 
-b = Bridge('192.168.0.10')
+cfg = configparser.ConfigParser()
+cfg.read('config.cfg')
+ip = cfg['Bridge']['ip']
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Manage phue lights.')
@@ -12,8 +15,13 @@ if __name__ == '__main__':
 
     parser.add_argument('--id',
                         help='id of the light to handle')
+
+    parser.add_argument('--ip',
+                        help='IP of the bridge',
+                        default=ip)
     args = parser.parse_args()
 
+    b = Bridge(args.ip)
     if args.id:
         lid = int(args.id)
         b.set_light(lid, 'on', not b.get_light(lid, 'on'))
